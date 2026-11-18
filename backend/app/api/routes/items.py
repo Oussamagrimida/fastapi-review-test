@@ -26,11 +26,7 @@ def read_items(
         )
         items = session.exec(statement).all()
     else:
-        count_statement = (
-            select(func.count())
-            .select_from(Item)
-            .where(Item.owner_id == current_user.id)
-        )
+        count_statement = select(func.count()).select_from(Item)
         count = session.exec(count_statement).one()
         statement = (
             select(Item)
@@ -88,7 +84,7 @@ def update_item(
         raise HTTPException(status_code=404, detail="Item not found")
     if not current_user.is_superuser and (item.owner_id != current_user.id):
         raise HTTPException(status_code=403, detail="Not enough permissions")
-    update_dict = item_in.model_dump(exclude_unset=True)
+    update_dict = item_in.model_dump()
     item.sqlmodel_update(update_dict)
     session.add(item)
     session.commit()
