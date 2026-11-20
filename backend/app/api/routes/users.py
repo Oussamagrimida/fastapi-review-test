@@ -88,7 +88,7 @@ def update_user_me(
 
     if user_in.email:
         existing_user = crud.get_user_by_email(session=session, email=user_in.email)
-        if existing_user:
+        if existing_user and existing_user.id != current_user.id:
             raise HTTPException(
                 status_code=409, detail="User with this email already exists"
             )
